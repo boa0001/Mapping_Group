@@ -1,0 +1,77 @@
+#!/bin/bash
+
+
+########## Load Modules
+source /apps/profiles/modules_asax.sh.dyn
+module load sra
+module load fastqc/0.10.1
+module load multiqc
+module load trimmomatic/0.39
+module load hisat2/2.2.0
+module load stringtie/2.2.1
+module load gcc/9.4.0
+module load python/3.10.8-zimemtc
+module load samtools
+module load bcftools
+module load gffread
+module load kallisto   # Add this line to load Kallisto
+
+#  Set the stack size to unlimited
+ulimit -s unlimited
+
+# Turn echo on so all commands are echoed in the output log
+set -x
+
+##########  Define variables and make directories##### c
+## Replace the numbers in the brackets with Your specific information
+  ## make variable for your ASC ID so the directories are automatically made in YOUR directory
+  ## Replace the [#] with paths to define these variable
+MyID=aubclsc0319          ## Example: MyID=aubtss    #change your ID 
+
+########Change your ID and folders#####
+TRANSCRIPTOME_FASTA=/scratch/$MyID/Final_project_birds            #Path to transcriptome FASTA file
+INDEX_DIR=/scratch/$MyID/Final_project_birds/GCF_000002315.6	   #Directory  where is the index 
+READS_DIR=/scratch/$MyID/Final_project_birds/CleanData             #Directory containing cleaned paired-end FASTQ files
+OUTPUT_DIR=/scratch/$MyID/Final_project_birds/Kallisto_output_final      # Directory to store Kallisto output. Move this files to home directoryCOUNTSD=/home/$MyID/Final_project_birds/Count_Kallisto             #Directory to store Kallisto counts
+LIST=`cat $TRANSCRIPTOME_FASTA/Map_HiSat2/list`                         #Path to the list that contains the names of the samples
+
+# Create index directory if it doesn't exist
+mkdir -p "$INDEX_DIR"
+
+# Create output directory if it doesn't exist
+mkdir -p "$OUTPUT_DIR"
+# Build Kallisto index
+kallisto index \
+        -i $INDEX_DIR/transcriptome_index \
+        $INDEX_DIR/cds_from_genomic.fna      #put the name of the reference as you have in your files. For Kallisto is the cds file not the complete genome 
+
+# Run Kallisto quant for each pair of cleaned reads
+#If you keep the same number of the folders, you do not need to change this part. 
+for sample in $LIST
+#for sample in ERR2984233
+        do
+               # Run Kallisto quant
+                kallisto quant \
+                -i $INDEX_DIR/transcriptome_index \
+                -o /$OUTPUT_DIR/$sample \
+                --pseudobam \
+                --genomebam \
+                -g $INDEX_DIR/cds_from_genomic.fna \
+                                -t 6 \
+                $READS_DIR/ERR2984230_1_paired.fastq \
+                $READS_DIR/ERR2984230_2_paired.fastq \
+                $READS_DIR/ERR2984231_1_paired.fastq \
+                $READS_DIR/ERR2984231_2_paired.fastq \
+                $READS_DIR/ERR2984232_1_paired.fastq \
+                $READS_DIR/ERR2984232_2_paired.fastq \
+                $READS_DIR/ERR2984233_1_paired.fastq \
+                $READS_DIR/ERR2984233_2_paired.fastq \
+                $READS_DIR/ERR2984242_1_paired.fastq \
+                $READS_DIR/ERR2984242_2_paired.fastq \
+                $READS_DIR/ERR2984243_1_paired.fastq \
+                $READS_DIR/ERR2984243_2_paired.fastq \
+                $READS_DIR/ERR2984244_1_paired.fastq \
+                $READS_DIR/ERR2984244_2_paired.fastq \
+                $READS_DIR/ERR2984245_1_paired.fastq \
+                $READS_DIR/ERR2984245_2_paired.fastq 
+        done
