@@ -63,20 +63,6 @@ for sample in $LIST
                 --genomebam \
                 -g $INDEX_DIR/cds_from_genomic.fna \
                                 -t 6 \
-                $READS_DIR/ERR2984230_1_paired.fastq \
-                $READS_DIR/ERR2984230_2_paired.fastq \
-                $READS_DIR/ERR2984231_1_paired.fastq \
-                $READS_DIR/ERR2984231_2_paired.fastq \
-                $READS_DIR/ERR2984232_1_paired.fastq \
-                $READS_DIR/ERR2984232_2_paired.fastq \
-                $READS_DIR/ERR2984233_1_paired.fastq \
-                $READS_DIR/ERR2984233_2_paired.fastq \
-                $READS_DIR/ERR2984242_1_paired.fastq \
-                $READS_DIR/ERR2984242_2_paired.fastq \
-                $READS_DIR/ERR2984243_1_paired.fastq \
-                $READS_DIR/ERR2984243_2_paired.fastq \
-                $READS_DIR/ERR2984244_1_paired.fastq \
-                $READS_DIR/ERR2984244_2_paired.fastq \
-                $READS_DIR/ERR2984245_1_paired.fastq \
-                $READS_DIR/ERR2984245_2_paired.fastq 
+                $READS_DIR/${sample}_1_paired.fastq \
+                $READS_DIR/${sample}_2_paired.fastq 
         done
